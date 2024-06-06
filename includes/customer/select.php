@@ -100,6 +100,7 @@ function get_edit_form($id)
     <div class="col-md-8 order-md-1">
         <form method="post" action="customers.php">
             <h4 class="mb-3">Customer Details</h4>
+            <input type="hidden" name="id" value="'.$id.'"></input>
             '.row_with_two_cols("First Name *","Last Name *", $result['first_name'], $result['last_name']).'
             '.row_with_single_col("Address *", $address).'
             '.row_with_two_cols("Ort *","Pin Code *", $ort, $pin_code).'
