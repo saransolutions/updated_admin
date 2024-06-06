@@ -25,6 +25,45 @@ function get_main_table($data)
     foreach ($rows as $result) {
         $id = $result['id'];
         $name = $result['first_name'] . ' ' . $result['last_name'];
+        $ort = $result["ort"];
+        $mobile = $result["mobile"];
+        
+        $company_name = $result["company_name"];
+        $service_type = $result["service_type"];
+        $website_name = $result["website_name"];
+        $domain_hosting = $result["domain_hosting"];
+        $advance_amount = $result["advance_amount"];
+        $total_price = $result["total_price"];
+        $balance = $result["balance"];
+        $data = $data . '<tr>
+            <td class="w-auto p-1"><input type="checkbox" class="btn-check" name="edit_id" value="' . $id . '" autocomplete="off"></td>
+			<td>' . $name . '</td>
+            <td>' . $mobile . '</td>
+            <td>' . $ort . '</td>
+            <td>' . $company_name . '</td>
+            <td>' . $service_type . '</td>
+            <td>' . $website_name . '</td>
+            <td>' . $domain_hosting . '</td>
+            <td>' . $advance_amount . '</td>
+            <td>' . $total_price . '</td>
+            <td>' . $balance . '</td>
+		</tr>';
+    }
+
+    $part3 = '
+    </tbody>
+</table>';
+    return $part1 . $data . $part3;
+}
+
+function get_edit_form($id)
+{
+    $sql = "select * from customers where id = ".$id;
+    $data = '';
+    $rows = getFetchArray($sql);
+    foreach ($rows as $result) {
+        $id = $result['id'];
+        $name = $result['first_name'] . ' ' . $result['last_name'];
         $address = $result["address"];
         $ort = $result["ort"];
         $pin_code = $result["pin_code"];
@@ -55,25 +94,40 @@ function get_main_table($data)
         $balance = $result["balance"];
         $delivery_date = $result["delivery_date"];
         $warranty_period = $result["warranty_period"];
-        $data = $data . '<tr>
-            <td class="w-auto p-1"><input type="checkbox" class="btn-check" name="edit_id" value="' . $id . '" autocomplete="off"></td>
-			<td>' . $name . '</td>
-            <td>' . $mobile . '</td>
-            <td>' . $ort . '</td>
-            <td>' . $company_name . '</td>
-            <td>' . $service_type . '</td>
-            <td>' . $website_name . '</td>
-            <td>' . $domain_hosting . '</td>
-            <td>' . $advance_amount . '</td>
-            <td>' . $total_price . '</td>
-            <td>' . $balance . '</td>
-		</tr>';
+        $data = '
+    <!-- add new customer -->
+    <div class="row justify-content-center">
+    <div class="col-md-8 order-md-1">
+        <form method="post" action="customers.php">
+            <h4 class="mb-3">Customer Details</h4>
+            '.row_with_two_cols("First Name *","Last Name *", $result['first_name'], $result['last_name']).'
+            '.row_with_single_col("Address *", $address).'
+            '.row_with_two_cols("Ort *","Pin Code *", $ort, $pin_code).'
+            '.row_with_two_cols("Mobile *","Email", $mobile, $email).'
+            <h4 class="mb-3">Business Details</h4>
+            '.row_with_single_col("Company Name *", $company_name).'
+            '.row_with_single_col("Service Type *", $service_type).'
+            <h4 class="mb-3">Product Details</h4>
+            '.row_with_two_cols("Product Type *", "Website Name *", $product_type, $website_name).'
+            '.row_with_two_cols("Supported Language *","Total Pages *", $supported_language, $total_pages).'
+            '.row_with_two_cols("Media Support *","Domain Hosting *", $media_support, $domain_hosting).'
+            '.row_with_two_cols("Mail Support *","Mail Advertisement *", $mail_support, $mail_advertisement).'
+            '.row_with_two_cols("User Feedback *","Online Payment support *", $user_feedback, null).'
+            '.row_with_two_cols("SEO support *","Google Business support", $seo_support, $google_business_support).'
+            '.row_with_two_cols("Cookies support *","Google Check activation", $cookies_support, $google_check_activation).'
+            <h4 class="mb-3">Payment Details</h4>
+            '.row_with_two_cols("Advance paid *", "Advance amount *", $advance_paid, $advance_amount).'
+            '.row_with_two_cols("Total Price *", "Balance *", $total_price, $balance).'
+            '.row_with_two_cols("Delivery date *", "Warranty period *", $delivery_date, $warranty_period).'
+            <button type="submit" name="add-new-customer-form" class="btn btn-primary float-right">Submit</button>
+            </form>
+        </div>
+    </div>
+    <!-- add new customer end -->
+    ';
     }
-
-    $part3 = '
-    </tbody>
-</table>';
-    return $part1 . $data . $part3;
+    
+    return $data;
 }
 
 function export($id)

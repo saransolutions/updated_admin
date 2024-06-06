@@ -51,7 +51,7 @@ function get_footer_js_scripts(){
     ';
 }
 
-function show_modal($button_name, $page_title, $button_form, $id){
+function show_modal($button_name, $page_title, $button_body, $id){
     $result = '
     <!-- '.$button_name.' Modal -->
     <div class="modal fade" id="'.$id.'" tabindex="-1" role="dialog" aria-labelledby="'.$id.'Label" aria-hidden="true">
@@ -65,9 +65,7 @@ function show_modal($button_name, $page_title, $button_form, $id){
     <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body">
-    '.$button_form.'
-</div>
+<div class="modal-body" id="'.$button_body.'"></div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
@@ -80,8 +78,8 @@ function show_modal($button_name, $page_title, $button_form, $id){
 
 function get_default_modal_targets($profile){
     return show_modal("Add New",$profile["page-title"],$profile["add-new-form"], $profile["add-modal-id"]).
-    show_modal("Edit",$profile["page-title"],$profile["edit-form"], $profile["edit-modal-id"]).
-    show_modal("Remove",$profile["page-title"],$profile["remove-form"], $profile["remove-modal-id"]);
+    show_modal("Edit",$profile["page-title"],$profile["edit-modal-body"], $profile["edit-modal-id"]).
+    show_modal("Remove",$profile["page-title"],$profile["remove-modal-body"], $profile["remove-modal-id"]);
 }
 
 function get_meta(){
@@ -143,6 +141,16 @@ function js_custom(){
                         } else {
                             alert("Please allow popups for this website");
                         }
+                    }
+                    if (button_name == "edit"){
+                        $.ajax({
+                            type: "GET",
+                            url: "customers.php",
+                            data: {"edit_id": value},
+                            success: function(data){
+                                $("#edit_body").html(data);
+                            }
+                        });
                     }
                 }
             });
@@ -572,16 +580,16 @@ function get_attr_name($display_name){
     return $attr;
 }
 
-function input_text_single_col($display_name, $class_name){
+function input_text_single_col($display_name, $class_name, $value){
     $result = '';
     $attr = get_attr_name($display_name);
     $result .= '
     <div class="'.$class_name.'">';
     $result .= '<label for="'.$attr.'">'.$display_name.'</label>';
     if (strpos($display_name, '*') !== false){
-        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="" required="">';
+        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'" required="">';
     }else{
-        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="">';
+        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'">';
     }
     $result .= '<div class="invalid-feedback">';
     $result .= 'Invalid '.$display_name.'';
@@ -591,23 +599,23 @@ function input_text_single_col($display_name, $class_name){
     return $result;
 }
 
-function row_with_two_cols($col1, $col2){
+function row_with_two_cols($col1, $col2, $val1, $val2){
     
     $result = '
     <!-- add_single_row_with_two_cols --!>';
     $result .= '<div class="row">';
-    $result .= input_text_single_col($col1, "col-md-6 mb-3");
-    $result .= input_text_single_col($col2, "col-md-6 mb-3");
+    $result .= input_text_single_col($col1, "col-md-6 mb-3", $val1);
+    $result .= input_text_single_col($col2, "col-md-6 mb-3", $val2);
     $result .= '</div>';
     $result .= '
     <!-- add_single_row_with_two_cols --!>';
     return $result;
 }
 
-function row_with_single_col($display_name){
+function row_with_single_col($display_name, $val1){
     $result = '
     <!-- add_single_row_with_single_col --!>';
-    $result = input_text_single_col($display_name, "mb-3");
+    $result = input_text_single_col($display_name, "mb-3", $val1);
     $result .= '<!-- add_single_row_with_single_col --!>
     ';
     return $result;
