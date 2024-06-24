@@ -64,7 +64,7 @@ function cheSNull($value){
 }
 function verifyUser($username, $password){
     $bid= -1;
-	$sql= "SELECT bid, role FROM bookies WHERE username ='".$username."' and password = '".$password."'";
+	$sql= "SELECT bid, role FROM ".DB_NAME.".bookies WHERE username ='".$username."' and password = '".$password."'";
 	$rows= getFetchArray($sql);
     if ($rows != null){
         $rowCounts= count($rows);

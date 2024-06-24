@@ -1,7 +1,7 @@
 <?php
 function get_main_table($data)
 {
-    $sql = "select * from customers";
+    $sql = "select * from ".DB_NAME.".customers";
     $part1 = '<table class="table table-bordered" cellspacing="0" width="100%" id="dataTable" cellspacing="0">
     <thead>
         <tr>
@@ -58,7 +58,7 @@ function get_main_table($data)
 
 function get_edit_form($id)
 {
-    $sql = "select * from customers where id = ".$id;
+    $sql = "select * from ".DB_NAME.".customers where id = ".$id;
     $data = '';
     $rows = getFetchArray($sql);
     foreach ($rows as $result) {
@@ -133,7 +133,7 @@ function get_edit_form($id)
 
 function export($id)
 {
-    $sql = "select * from customers where id=" . $id;
+    $sql = "select * from ".DB_NAME.".customers where id=" . $id;
     $rows = getFetchArray($sql);
     $data = '';
     if (count($rows) > 0) {
