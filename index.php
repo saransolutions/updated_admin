@@ -12,6 +12,6 @@ if(isset($_GET['logoff']))
 }elseif(!isset($_SESSION['user'])){
     header('Location: login.php');
 }else{
-    header('Location: dashboard.php');
+    header('Location: customers.php');
 }
 ?>

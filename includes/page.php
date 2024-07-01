@@ -79,6 +79,7 @@ function show_modal($button_name, $page_title, $button_body, $id){
 function get_default_modal_targets($profile){
     return show_modal("Add New",$profile["page-title"],$profile["add-new-form"], $profile["add-modal-id"]).
     show_modal("Edit",$profile["page-title"],$profile["edit-modal-body"], $profile["edit-modal-id"]).
+    show_modal("Pay",$profile["page-title"],$profile["pay-modal-body"], $profile["pay-modal-id"]).
     show_modal("Remove",$profile["page-title"],$profile["remove-modal-body"], $profile["remove-modal-id"]);
 }
 
@@ -105,12 +106,12 @@ function get_links(){
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">';
 }
 
-function get_head()
+function get_head($profile)
 {
     return '
     <head>
         '.get_meta().'
-        <title>' . MAIN_TITLE . '</title>
+        <title>' . MAIN_TITLE . ' - '.$profile['page-title'].'</title>
         '.get_links().'
         '.js_custom().'
     </head>
@@ -123,7 +124,7 @@ function js_custom(){
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function(){
-            $("#edit_button,#remove_button,#export_button").click(function(){
+            $("#pay_button,#edit_button,#remove_button,#export_button,#invoice_button").click(function(){
                 var count = $("input:checkbox:checked").length
                 if (count == 0) {
                     alert("select at least \"one\" checkbox")
@@ -142,6 +143,14 @@ function js_custom(){
                             alert("Please allow popups for this website");
                         }
                     }
+                    if (button_name == "invoice"){
+                        var win = window.open("customers.php?invoice_id="+value+"", "_blank");
+                        if (win) {
+                            win.focus();
+                        } else {
+                            alert("Please allow popups for this website");
+                        }
+                    }
                     if (button_name == "edit"){
                         $.ajax({
                             type: "GET",
@@ -149,6 +158,26 @@ function js_custom(){
                             data: {"edit_id": value},
                             success: function(data){
                                 $("#edit_body").html(data);
+                            }
+                        });
+                    }
+                    if (button_name == "pay"){
+                        $.ajax({
+                            type: "GET",
+                            url: "customers.php",
+                            data: {"pay_id": value},
+                            success: function(data){
+                                $("#pay_body").html(data);
+                            }
+                        });
+                    }
+                    if (button_name == "remove"){
+                        $.ajax({
+                            type: "GET",
+                            url: "customers.php",
+                            data: {"remove_id": value},
+                            success: function(data){
+                                $("#remove_body").html(data);
                             }
                         });
                     }
@@ -392,8 +421,10 @@ function get_main_content($profile)
                             Add New
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" name="edit" id="edit_button" data-toggle="modal" data-target="#edit_modal">Edit</button>
+                    <button type="button" class="btn btn-dark btn-sm" name="pay" id="pay_button" data-toggle="modal" data-target="#pay_modal">Pay</button>
                     <button type="button"  class="btn btn-danger btn-sm" name="remove" id="remove_button" data-toggle="modal" data-target="#remove_modal">Remove</button>
                     <button type="button" class="btn btn-primary btn-sm" name="export" id="export_button">Export</button>
+                    <button type="button" class="btn btn-warning btn-sm" name="invoice" id="invoice_button">Invoice</button>
                     <button type="button" class="btn btn-info btn-sm" name="reports">Reports</button>
                 </div>
             </div>
@@ -471,16 +502,13 @@ function get_sidebar()
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">' . MAIN_TITLE . ' <sup>2</sup></div>
+                <img src="img/logo.png" alt="test" style="width:200px;background-color:#fff2e6"></img>
             </a>
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -580,16 +608,16 @@ function get_attr_name($display_name){
     return $attr;
 }
 
-function input_text_single_col($display_name, $class_name, $value){
+function input_text_single_col($display_name, $class_name, $value, $is_readonly){
     $result = '';
     $attr = get_attr_name($display_name);
     $result .= '
     <div class="'.$class_name.'">';
     $result .= '<label for="'.$attr.'">'.$display_name.'</label>';
     if (strpos($display_name, '*') !== false){
-        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'" required="">';
+        $result .= '<input type="text" '.$is_readonly.' class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'" required="">';
     }else{
-        $result .= '<input type="text" class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'">';
+        $result .= '<input type="text" '.$is_readonly.' class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'">';
     }
     $result .= '<div class="invalid-feedback">';
     $result .= 'Invalid '.$display_name.'';
@@ -599,23 +627,38 @@ function input_text_single_col($display_name, $class_name, $value){
     return $result;
 }
 
-function row_with_two_cols($col1, $col2, $val1, $val2){
+function show_single_col($display_name, $class_name, $value){
+    $result = '';
+    $attr = get_attr_name($display_name);
+    $result .= '
+    <div class="'.$class_name.'">';
+    $result .= '<label for="'.$attr.'">'.$display_name.'</label>';
+    $result .= $value;
+    $result .= '<div class="invalid-feedback">';
+    $result .= 'Invalid '.$display_name.'';
+    $result .= '</div>';
+    $result .= '</div>
+    ';
+    return $result;
+}
+
+function row_with_two_cols($col1, $col2, $val1, $val2, $ro_col1, $ro_col2){
     
     $result = '
     <!-- add_single_row_with_two_cols --!>';
     $result .= '<div class="row">';
-    $result .= input_text_single_col($col1, "col-md-6 mb-3", $val1);
-    $result .= input_text_single_col($col2, "col-md-6 mb-3", $val2);
+    $result .= input_text_single_col($col1, "col-md-6 mb-3", $val1, $ro_col1);
+    $result .= input_text_single_col($col2, "col-md-6 mb-3", $val2, $ro_col2);
     $result .= '</div>';
     $result .= '
     <!-- add_single_row_with_two_cols --!>';
     return $result;
 }
 
-function row_with_single_col($display_name, $val1){
+function row_with_single_col($display_name, $val1, $ro_col1){
     $result = '
     <!-- add_single_row_with_single_col --!>';
-    $result = input_text_single_col($display_name, "mb-3", $val1);
+    $result = input_text_single_col($display_name, "mb-3", $val1, $ro_col1);
     $result .= '<!-- add_single_row_with_single_col --!>
     ';
     return $result;
@@ -623,13 +666,17 @@ function row_with_single_col($display_name, $val1){
 
 function get_doc($profile)
 {
-    $head = get_head();
-    $body = get_body($profile);
-    return '
-    <!DOCTYPE html>
-    <html lang="en">
-        ' . $head . '
-        ' . $body . '
-    </html>';
+    if ($profile["page"] == "login"){
+        return login($profile);
+    }else{
+        $head = get_head($profile);
+        $body = get_body($profile);
+        return '
+            <!DOCTYPE html>
+            <html lang="en">
+                ' . $head . '
+                ' . $body . '
+            </html>';
+    }
 }
 ?>

@@ -17,14 +17,22 @@ function pdf_block($id){
 
 function pdf_head_foot($id){
     return '<htmlpageheader name="myheader">
-    <table width="100%"><tr>
-    <td width="50%" style="color:#0000BB; ">
-        <span style="font-weight: bold; font-size: 14pt;">'.MAIN_TITLE.'.</span><br />
-        '.HEAD_ADDRESS_LINE_1.'<br />'.HEAD_ADDRESS_LINE_2.'<br />
-        <a href="http://www.'.HEAD_ADDRESS_LINE_3.'" target="_blank">'.HEAD_ADDRESS_LINE_3.'</a><br>
-        '.HEAD_WED_ADDRESS.'<br /><span style="font-family:dejavusanscondensed;">&#9742;</span> '.HEAD_PHONE.'</td>
-    <td width="50%" style="text-align: right;">Invoice No.<br /><span style="font-weight: bold; font-size: 12pt;">SS-00'.$id.'</span></td>
-    </tr></table>
+    <table width="100%">
+        <tr>
+            <td width="50%">
+                <img src="'.HEAD_LOGO.'"></img>
+            </td>
+            <td width="50%" style="text-align: right; ">
+                <span style="font-weight: bold; font-size: 14pt;">'.MAIN_TITLE.'</span><br />
+                '.HEAD_ADDRESS_LINE_1.'<br />'.HEAD_ADDRESS_LINE_2.'<br />
+                
+                <a href="http://www.'.HEAD_ADDRESS_LINE_3.'" target="_blank">'.HEAD_ADDRESS_LINE_3.'</a><br>
+                '.HEAD_WED_ADDRESS.'<br /><span style="font-family:dejavusanscondensed;">&#9742;</span> '.HEAD_PHONE.'<br />'.'
+                UID : '.HEAD_UID.'<br />'.'
+            </td>
+        </tr>
+    </table>
+    <hr>
     </htmlpageheader>
     
     <htmlpagefooter name="myfooter">
