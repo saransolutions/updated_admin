@@ -8,11 +8,7 @@ function get_main_table($data)
             <th class="w-auto p-1">S.No</th>
             <th>Name</th>
             <th>Mobile</th>
-            <th>Ort</th>
-            <th>Company</th>
-            <th>Service</th>
             <th>Website</th>
-            <th>Domain</th>
             <th>Advance</th>
             <th>Total</th>
             <th>Balance</th>
@@ -37,13 +33,9 @@ function get_main_table($data)
         $balance = $result["balance"];
         $data = $data . '<tr>
             <td class="w-auto p-1"><input type="checkbox" class="btn-check" name="edit_id" value="' . $id . '" autocomplete="off"></td>
-			<td>' . $name . '</td>
+			<td><a href="customers.php?cid='.$id.'">' . $name . '</a></td>
             <td>' . $mobile . '</td>
-            <td>' . $ort . '</td>
-            <td>' . $company_name . '</td>
-            <td>' . $service_type . '</td>
             <td>' . $website_name . '</td>
-            <td>' . $domain_hosting . '</td>
             <td>' . $advance_amount . '</td>
             <td>' . $total_price . '</td>
             <td>' . $balance . '</td>
@@ -456,7 +448,7 @@ function invoice($id)
             $mail_support = "E-Mail Account configuration & Forward<br>";
         }
         $domain_hosting = $result["domain_hosting"];
-        if (str_contains($domain_hosting, "New Domain")){
+        if (strpos($domain_hosting, "New Domain") !== false){
             $domain_hosting = "Domain Registration & Hosting support<br>";
         }else {
             $domain_hosting = '';
@@ -567,4 +559,49 @@ function invoice($id)
         $file_name = 'SS-00' . $id . '_' . str_replace(' ', '_', $name) . '.pdf';
         $mpdf->Output($file_name, "I");
     }
+}
+
+function get_single_customer($id){
+    $sql = "select * from " . DB_NAME . ".customers where id = ".$id;
+    $part1 = '<table class="table">
+    <thead colspan="2" style="font"><strong style>Customer Details</strong></thead>
+        <tbody>
+        ';
+    $data = '';
+    $rows = getFetchArray($sql);
+    foreach ($rows as $result) {
+        $id = $result['id'];
+        $name = $result['first_name'] . ' ' . $result['last_name'];
+        $ort = $result["ort"];
+        $mobile = $result["mobile"];
+        $address = $result["address"];
+        $ort = $result["ort"];
+        $pin_code = $result["pin_code"];
+        $mobile = $result["mobile"];
+        $email = $result["email"];
+
+        $company_name = $result["company_name"];
+        $service_type = $result["service_type"];
+        $website_name = $result["website_name"];
+        $domain_hosting = $result["domain_hosting"];
+        $advance_amount = $result["advance_amount"];
+        $total_price = $result["total_price"];
+        $balance = $result["balance"];
+        
+        $data .= '<tr><td>Name</td><td>'.$name.'</td></tr>';
+        $data .= '<tr><td>Address</td><td>'.$address.'</td></tr>';
+        $data .= '<tr><td>Mobile</td><td>'.$mobile.'</td></tr>';
+        $data .= '<tr><td>Ort</td><td>'.$ort.'</td></tr>';
+        $data .= '<tr><td>Pincode</td><td>'.$pin_code.'</td></tr>';
+        $data .= '<tr><td>Email</td><td>'.$email.'</td></tr>';
+
+        $data .= '<tr><td colspan="2"><strong>Business Details</strong></td></tr>';
+        $data .= '<tr><td>Ort</td><td>'.$ort.'</td></tr>';
+        $data .= '<tr><td>Ort</td><td>'.$ort.'</td></tr>';
+    }
+
+    $part3 = '
+    </tbody>
+</table>';
+    return $part1 . $data . $part3;
 }

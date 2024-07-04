@@ -1,7 +1,8 @@
 <?php
 
 
-function get_scroll_to_top(){
+function get_scroll_to_top()
+{
     return '
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -10,7 +11,8 @@ function get_scroll_to_top(){
     ';
 }
 
-function get_logout_modal(){
+function get_logout_modal()
+{
     return '
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -34,7 +36,8 @@ function get_logout_modal(){
     ';
 }
 
-function get_footer_js_scripts(){
+function get_footer_js_scripts()
+{
     return '
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -51,39 +54,42 @@ function get_footer_js_scripts(){
     ';
 }
 
-function show_modal($button_name, $page_title, $button_body, $id){
+function show_modal($button_name, $page_title, $button_body, $id)
+{
     $result = '
-    <!-- '.$button_name.' Modal -->
-    <div class="modal fade" id="'.$id.'" tabindex="-1" role="dialog" aria-labelledby="'.$id.'Label" aria-hidden="true">
+    <!-- ' . $button_name . ' Modal -->
+    <div class="modal fade" id="' . $id . '" tabindex="-1" role="dialog" aria-labelledby="' . $id . 'Label" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="'.$id.'Label">'.$button_name.' '.$page_title.'</h5>
+                    <h5 class="modal-title" id="' . $id . 'Label">' . $button_name . ' ' . $page_title . '</h5>
     ';
-    
+
     $result .= '<button type="button" class="close" data-dismiss="modal" aria-label="Close">
     <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body" id="'.$button_body.'"></div>
+<div class="modal-body" id="' . $button_body . '"></div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
 </div>
 </div>
 </div>
-<!-- End of '.$button_name.' Modal -->';
+<!-- End of ' . $button_name . ' Modal -->';
     return $result;
 }
 
-function get_default_modal_targets($profile){
-    return show_modal("Add New",$profile["page-title"],$profile["add-new-form"], $profile["add-modal-id"]).
-    show_modal("Edit",$profile["page-title"],$profile["edit-modal-body"], $profile["edit-modal-id"]).
-    show_modal("Pay",$profile["page-title"],$profile["pay-modal-body"], $profile["pay-modal-id"]).
-    show_modal("Remove",$profile["page-title"],$profile["remove-modal-body"], $profile["remove-modal-id"]);
+function get_default_modal_targets($profile)
+{
+    return show_modal("Add New", $profile["page-title"], $profile["add-new-form"], $profile["add-modal-id"]) .
+        show_modal("Edit", $profile["page-title"], $profile["edit-modal-body"], $profile["edit-modal-id"]) .
+        show_modal("Pay", $profile["page-title"], $profile["pay-modal-body"], $profile["pay-modal-id"]) .
+        show_modal("Remove", $profile["page-title"], $profile["remove-modal-body"], $profile["remove-modal-id"]);
 }
 
-function get_meta(){
+function get_meta()
+{
     return '
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -92,7 +98,8 @@ function get_meta(){
     <meta name="author" content="">';
 }
 
-function get_links(){
+function get_links()
+{
     return '<!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -110,15 +117,16 @@ function get_head($profile)
 {
     return '
     <head>
-        '.get_meta().'
-        <title>' . MAIN_TITLE . ' - '.$profile['page-title'].'</title>
-        '.get_links().'
-        '.js_custom().'
+        ' . get_meta() . '
+        <title>' . MAIN_TITLE . ' - ' . $profile['page-title'] . '</title>
+        ' . get_links() . '
+        ' . js_custom() . '
     </head>
     ';
 }
 
-function js_custom(){
+function js_custom()
+{
     return '
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -401,51 +409,92 @@ function get_topbar()
 function get_main_content($profile)
 {
     $topbar = get_topbar();
-    return '
-    <!-- Main Content -->
-    <div id="content">
-        ' . $topbar . '
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">' . $profile['page-title'] . '</h1>
-            <!-- Default Action buttons -->
-            <div class="d-flex justify-content-between">
-                <div>
-                    <!--free left space-->
+    if ($profile["view"] == "main") {
+        return '
+        <!-- Main Content -->
+        <div id="content">
+            ' . $topbar . '
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">' . $profile['page-title'] . '</h1>
+                <!-- Default Action buttons -->
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <!--free left space-->
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-success btn-sm"
+                            name="add_new" data-toggle="modal"
+                            data-target="#add_new_modal">
+                                Add New
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" name="edit" id="edit_button" data-toggle="modal" data-target="#edit_modal">Edit</button>
+                        <button type="button" class="btn btn-dark btn-sm" name="pay" id="pay_button" data-toggle="modal" data-target="#pay_modal">Pay</button>
+                        <button type="button"  class="btn btn-danger btn-sm" name="remove" id="remove_button" data-toggle="modal" data-target="#remove_modal">Remove</button>
+                        <button type="button" class="btn btn-primary btn-sm" name="export" id="export_button">Export</button>
+                        <button type="button" class="btn btn-warning btn-sm" name="invoice" id="invoice_button">Invoice</button>
+                        <button type="button" class="btn btn-info btn-sm" name="reports">Reports</button>
+                    </div>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-success btn-sm"
-                        name="add_new" data-toggle="modal"
-                        data-target="#add_new_modal">
-                            Add New
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" name="edit" id="edit_button" data-toggle="modal" data-target="#edit_modal">Edit</button>
-                    <button type="button" class="btn btn-dark btn-sm" name="pay" id="pay_button" data-toggle="modal" data-target="#pay_modal">Pay</button>
-                    <button type="button"  class="btn btn-danger btn-sm" name="remove" id="remove_button" data-toggle="modal" data-target="#remove_modal">Remove</button>
-                    <button type="button" class="btn btn-primary btn-sm" name="export" id="export_button">Export</button>
-                    <button type="button" class="btn btn-warning btn-sm" name="invoice" id="invoice_button">Invoice</button>
-                    <button type="button" class="btn btn-info btn-sm" name="reports">Reports</button>
-                </div>
-            </div>
-            <!-- End Action buttons -->
-            <!-- DataTables Example -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">' . $profile['page-title'] . '</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        ' . $profile['content'] . '
+                <!-- End Action buttons -->
+                <!-- DataTables Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">' . $profile['page-title'] . '</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            ' . $profile['content'] . '
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- /.container-fluid -->
+            <!-- /.container-fluid -->
 
+        </div>
+        <!-- End of Main Content -->
+        ';
+    } elseif ($profile["view"] == "single") {
+        return '
+        <!-- Main Content -->
+        <div id="content">
+            ' . $topbar . '
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-1 text-gray-800">'.$profile['page-title'].'</h1>
+    <!-- Content Row -->
+    <div class="row">
+        <!-- First Column -->
+        <div class="col-lg-3">
+        </div>
+        <!-- Second Column -->
+        <div class="col-lg-6">
+            <!-- Background Gradient Utilities -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary text-right">
+                        '.$profile["view-single-buttons"].'
+                    </h6>
+                </div>
+                <div class="card-body">
+                    '.$profile['content'].'
+                </div>
+            </div>
+        </div>
+        <!-- Third Column -->
+        <div class="col-lg-3">
+        </div>
     </div>
-    <!-- End of Main Content -->
-    ';
+    <!-- end of row-->
+</div>
+<!-- /.container-fluid -->
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        ';
+    }
 }
 
 function get_wrapper($profile)
@@ -470,7 +519,7 @@ function get_wrapper($profile)
             </footer>
             <!-- End of Footer -->
             
-            '.$modal_targets.'
+            ' . $modal_targets . '
 
         </div>
         <!-- End of Content Wrapper -->
@@ -502,7 +551,7 @@ function get_sidebar()
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-                <img src="img/logo.png" alt="test" style="width:200px;background-color:#fff2e6"></img>
+                <img src="img/logo.png" alt="test" style="width:100%;background-color:#fff2e6"></img>
             </a>
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -602,48 +651,52 @@ function get_sidebar()
     ';
 }
 
-function get_attr_name($display_name){
+function get_attr_name($display_name)
+{
     $attr = str_replace(' *', '', strtolower($display_name));
     $attr = preg_replace('/\s+/', '_', $attr);
     return $attr;
 }
 
-function input_text_single_col($display_name, $class_name, $value, $is_readonly){
+function input_text_single_col($display_name, $class_name, $value, $is_readonly)
+{
     $result = '';
     $attr = get_attr_name($display_name);
     $result .= '
-    <div class="'.$class_name.'">';
-    $result .= '<label for="'.$attr.'">'.$display_name.'</label>';
-    if (strpos($display_name, '*') !== false){
-        $result .= '<input type="text" '.$is_readonly.' class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'" required="">';
-    }else{
-        $result .= '<input type="text" '.$is_readonly.' class="form-control" id="'.$attr.'" name="'.$attr.'" placeholder="" value="'.$value.'">';
+    <div class="' . $class_name . '">';
+    $result .= '<label for="' . $attr . '">' . $display_name . '</label>';
+    if (strpos($display_name, '*') !== false) {
+        $result .= '<input type="text" ' . $is_readonly . ' class="form-control" id="' . $attr . '" name="' . $attr . '" placeholder="" value="' . $value . '" required="">';
+    } else {
+        $result .= '<input type="text" ' . $is_readonly . ' class="form-control" id="' . $attr . '" name="' . $attr . '" placeholder="" value="' . $value . '">';
     }
     $result .= '<div class="invalid-feedback">';
-    $result .= 'Invalid '.$display_name.'';
+    $result .= 'Invalid ' . $display_name . '';
     $result .= '</div>';
     $result .= '</div>
     ';
     return $result;
 }
 
-function show_single_col($display_name, $class_name, $value){
+function show_single_col($display_name, $class_name, $value)
+{
     $result = '';
     $attr = get_attr_name($display_name);
     $result .= '
-    <div class="'.$class_name.'">';
-    $result .= '<label for="'.$attr.'">'.$display_name.'</label>';
+    <div class="' . $class_name . '">';
+    $result .= '<label for="' . $attr . '">' . $display_name . '</label>';
     $result .= $value;
     $result .= '<div class="invalid-feedback">';
-    $result .= 'Invalid '.$display_name.'';
+    $result .= 'Invalid ' . $display_name . '';
     $result .= '</div>';
     $result .= '</div>
     ';
     return $result;
 }
 
-function row_with_two_cols($col1, $col2, $val1, $val2, $ro_col1, $ro_col2){
-    
+function row_with_two_cols($col1, $col2, $val1, $val2, $ro_col1, $ro_col2)
+{
+
     $result = '
     <!-- add_single_row_with_two_cols --!>';
     $result .= '<div class="row">';
@@ -655,7 +708,8 @@ function row_with_two_cols($col1, $col2, $val1, $val2, $ro_col1, $ro_col2){
     return $result;
 }
 
-function row_with_single_col($display_name, $val1, $ro_col1){
+function row_with_single_col($display_name, $val1, $ro_col1)
+{
     $result = '
     <!-- add_single_row_with_single_col --!>';
     $result = input_text_single_col($display_name, "mb-3", $val1, $ro_col1);
@@ -666,9 +720,9 @@ function row_with_single_col($display_name, $val1, $ro_col1){
 
 function get_doc($profile)
 {
-    if ($profile["page"] == "login"){
+    if ($profile["page"] == "login") {
         return login($profile);
-    }else{
+    } else {
         $head = get_head($profile);
         $body = get_body($profile);
         return '
@@ -679,4 +733,3 @@ function get_doc($profile)
             </html>';
     }
 }
-?>
